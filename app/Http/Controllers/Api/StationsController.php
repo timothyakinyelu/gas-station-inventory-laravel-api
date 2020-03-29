@@ -46,7 +46,7 @@ class StationsController extends Controller
             foreach($items as $key => $item) {
                 $list[$key] = $item;
                 
-                $date = Carbon::parse($list[$key]['date_of_entry'])->format('F');
+                $date = Carbon::parse($list[$key]['date_of_entry'])->format('M');
                 
                 $total_sales = $list[$key]->amount;
                 $total_expenses = $list[$key]->expense_amount;
