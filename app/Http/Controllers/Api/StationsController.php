@@ -20,7 +20,8 @@ class StationsController extends Controller
      */
     public function index($id) 
     {
-        $stations = Station::where('company_id', $id)->get();
+        $dec = base64_decode($id);
+        $stations = Station::where('company_id', $dec)->get();
 
         return response()->json(StationResource::collection($stations));
     }
@@ -28,10 +29,12 @@ class StationsController extends Controller
     /**
      * Fetch monthly data to use in charts
      */
-    public function getChartDataByMonth() 
+    public function getChartDataByMonth($id) 
     {
+        // dd($slug);
         $stationData = [];
-        $stations = Station::all();
+        $dec = base64_decode($id);
+        $stations = Station::where('company_id', $dec)->get();
 
         foreach ($stations as $station) {
             $tmp = [];
@@ -90,10 +93,11 @@ class StationsController extends Controller
     /**
      * Fetch the current months station expenses
      */
-    public function getExpensesByCurrentMonth() 
+    public function getExpensesByCurrentMonth($id) 
     {
         $stationExpenses = [];
-        $stations = Station::all();
+        $dec = \base64_decode($id);
+        $stations = Station::where('company_id', $dec)->get();;
 
         foreach ($stations as $station) {
             $tmp = [];
@@ -139,10 +143,12 @@ class StationsController extends Controller
     /**
      *  Fetch the current months station sales
      */
-    public function getSalesByCurrentMonth() 
+    public function getSalesByCurrentMonth($id) 
     {
+        // dd($id);
         $stationSales = [];
-        $stations = Station::all();
+        $dec = \base64_decode($id);
+        $stations = Station::where('company_id', $dec)->get();
 
         foreach ($stations as $station) {
             $tmp = [];

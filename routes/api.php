@@ -45,34 +45,45 @@ Route::group(['prefix' => 'v2'], function(){
             |-------------------------------------------------------------------------------
             | Display sales by month
             |-------------------------------------------------------------------------------
-            | URL:            /api/v2/chartDataBymonth
+            | URL:            /api/v2/chartDataBymonth/{id}
             | Controller:     Api\StationsController@getChartDataByMonth
             | Method:         GET
             | Description:    Fetch data by month
             */
-            Route::get('chartDataBymonth', 'Api\StationsController@getChartDataByMonth');
+            Route::get('chartDataBymonth/{id}', 'Api\StationsController@getChartDataByMonth');
 
             /*
             |-------------------------------------------------------------------------------
             | Display sum of current month sales
             |-------------------------------------------------------------------------------
-            | URL:            /api/v2/currentMonthSalesSum
+            | URL:            /api/v2/currentMonthSalesSum/{id}
             | Controller:     Api\StationsController@getAllSalesByMonth
             | Method:         GET
             | Description:    Fetch sum of current month sales
             */
-            Route::get('currentMonthSalesSum', 'Api\StationsController@getSalesByCurrentMonth');
+            Route::get('currentMonthSalesSum/{id}', 'Api\StationsController@getSalesByCurrentMonth');
 
             /*
             |-------------------------------------------------------------------------------
             | Display sum of current month expenses
             |-------------------------------------------------------------------------------
-            | URL:            /api/v2/currentMonthExpensesSum
+            | URL:            /api/v2/currentMonthExpensesSum/{id}
             | Controller:     Api\StationsController@getExpensesByCurrentMonth
             | Method:         GET
             | Description:    Fetch sum of current month expenses
             */
-            Route::get('currentMonthExpensesSum', 'Api\StationsController@getExpensesByCurrentMonth');
+            Route::get('currentMonthExpensesSum/{id}', 'Api\StationsController@getExpensesByCurrentMonth');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Display all sales of a service outlet
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v1/salesbyStation/{id}
+            | Controller:     Api\SalesController@stationSales
+            | Method:         GET
+            | Description:    Fetch all sales by outlet from  db
+            */
+            Route::get('salesbystation/{id}', 'Api\SalesController@getSalesByStation');
         });
     });
 });

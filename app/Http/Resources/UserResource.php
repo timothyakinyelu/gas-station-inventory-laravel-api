@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Auth;
+// use Math;
 
 class UserResource extends JsonResource
 {
@@ -23,7 +24,7 @@ class UserResource extends JsonResource
             'station' => $this->station->slug,
             'stationID' => $this->station_id,
             'company' => $this->company->slug,
-            'companyID' => $this->company->id,
+            'companyID' => base64_encode($this->company->id),
             $this->mergeWhen(Auth::user() && Auth::user()->permission >= config('constants.ADMIN'), [
                 'id' => $this->id,
                 'stationName' => $this->station->name,
