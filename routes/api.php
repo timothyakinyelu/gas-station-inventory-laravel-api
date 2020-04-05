@@ -78,12 +78,34 @@ Route::group(['prefix' => 'v2'], function(){
             |-------------------------------------------------------------------------------
             | Display all sales of a service outlet
             |-------------------------------------------------------------------------------
-            | URL:            /api/v1/salesbyStation/{id}
+            | URL:            /api/v2/salesbyStation/{id}
             | Controller:     Api\SalesController@stationSales
             | Method:         GET
             | Description:    Fetch all sales by outlet from  db
             */
             Route::get('salesbystation/{id}', 'Api\SalesController@getSalesByStation');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Display details of day sales sum
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/salesbydate/{id}/{product_code_id}/{date}
+            | Controller:     Api\SalesController@getSalesByDate
+            | Method:         GET
+            | Description:    Fetch details of a cumulative sale from db
+            */
+            Route::get('salesbydate/{id}/{product_code_id}/{date}', 'Api\SalesController@getSalesByDate');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete an individual or multiple sales from db
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/sales/{id}
+            | Controller:     Api\SalesController@delete
+            | Method:         DELETE
+            | Description:    Delete sale item from table
+            */
+            Route::delete('sales/{id}', 'Api\SalesController@delete');
         });
     });
 });
