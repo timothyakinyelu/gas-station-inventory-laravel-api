@@ -32,6 +32,16 @@ Route::group(['prefix' => 'v2'], function(){
         Route::group(['middleware' => ['admin']], function() {
             /*
             |-------------------------------------------------------------------------------
+            | Display all products
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/products
+            | Controller:     Api\ProductsController@index
+            | Method:         GET
+            | Description:    Fetch all products from db
+            */
+            Route::get('products', 'Api\ProductsController@index');
+            /*
+            |-------------------------------------------------------------------------------
             | Display all service outlets of a company
             |-------------------------------------------------------------------------------
             | URL:            /api/v2/stations/{id}
@@ -95,6 +105,28 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Fetch details of a cumulative sale from db
             */
             Route::get('salesbydate/{id}/{product_code_id}/{date}', 'Api\SalesController@getSalesByDate');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get sale to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/sales/{id}/edit
+            | Controller:     Api\SalesController@getSaleToEdit
+            | Method:         GET
+            | Description:    Fetch a sale to edit
+            */
+            Route::get('sales/{id}/edit', 'Api\SalesController@getSaleToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update a sale
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/sales/{id}/update
+            | Controller:     Api\SalesController@update
+            | Method:         PUT
+            | Description:    Update a sale
+            */
+            Route::put('sales/{id}/update', 'Api\SalesController@update');
 
             /*
             |-------------------------------------------------------------------------------

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Http\Resources\SaleResource;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
 use App\Sale;
@@ -15,100 +16,148 @@ class SalesController extends Controller
 {
     public function getSalesByStation($id)
     {
+        $response = Gate::inspect('viewAny', [ Sale::class ]);
         $data = [];
         
-        $sales = Sale::where('station_id', $id)
-            ->orderBy('date_of_entry', 'DESC')
-            ->get();
+        if ($response->allowed()) {
+            $sales = Sale::where('station_id', $id)
+                ->orderBy('date_of_entry', 'DESC')
+                ->get();
 
-        $results = [];
+            $results = [];
 
-        foreach($sales as $sale) {
-            $date = $sale->date_of_entry;
-            $product = Product::find($sale->product_id);
-            $product_code = ProductCode::find($sale->product_code_id);
-            $total_sales = $sale->amount;
+            foreach($sales as $sale) {
+                $date = $sale->date_of_entry;
+                $product = Product::find($sale->product_id);
+                $product_code = ProductCode::find($sale->product_code_id);
+                $total_sales = $sale->amount;
 
-            if(isset($results[$date])) {
-                if(isset($results[$date][$product_code->id])) {
-                    $results[$date][$product_code->id]['total_sale'] += $total_sales;
+                if(isset($results[$date])) {
+                    if(isset($results[$date][$product_code->id])) {
+                        $results[$date][$product_code->id]['total_sale'] += $total_sales;
+                    } else {
+                        $results[$date][$product_code->id] = [
+                            'product_code_id' => $product_code->id,
+                            'product_code' => $product_code->code,
+                            'product' => $product->name,
+                            'total_sale' => $total_sales,
+                            'date' => $date,
+                        ];
+                    }
                 } else {
-                    $results[$date][$product_code->id] = [
-                        'product_code_id' => $product_code->id,
-                        'product_code' => $product_code->code,
-                        'product' => $product->name,
-                        'total_sale' => $total_sales,
-                        'date' => $date,
+                    $results[$date] = [
+                        $product_code->id => [
+                            'product_code_id' => $product_code->id,
+                            'product_code' => $product_code->code,
+                            'product' => $product->name,
+                            'total_sale' => $total_sales,
+                            'date' => $date,
+                        ]
                     ];
                 }
-            } else {
-                $results[$date] = [
-                    $product_code->id => [
-                        'product_code_id' => $product_code->id,
-                        'product_code' => $product_code->code,
-                        'product' => $product->name,
-                        'total_sale' => $total_sales,
-                        'date' => $date,
-                    ]
-                ];
             }
-        }
 
-        $temp = [];
-        foreach($results as $xKey => $xData) {
-            foreach($xData as $yKey => $yData) {
-                $temp[] = $yData;
+            $temp = [];
+            foreach($results as $xKey => $xData) {
+                foreach($xData as $yKey => $yData) {
+                    $temp[] = $yData;
+                }
             }
+
+            $data = $temp;
+            $items = $data;
+
+            $currentPage = Paginator::resolveCurrentPage();
+            $perPage = 10;
+            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+            $total = count($items);
+
+            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+            $paginator->withPath(config('app.url').'/api/v2/salesbystation/'.$id);
+            return response()->json($paginator);
+        } else {
+            return $response->message();
         }
-
-        $data = $temp;
-        $items = $data;
-
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-        $total = count($items);
-
-        $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
-
-        $paginator->withPath(config('app.url').'/api/v2/salesbystation/'.$id);
-        return response()->json($paginator);
     }
 
     public function getSalesByDate($id, $product_code_id, $date, Request $request) 
     {
-        $sales = Sale::where('station_id', $id)
-        ->where('product_code_id', $product_code_id)
-        ->where('date_of_entry', $date)
-        ->get();
+        $response = Gate::inspect('viewAny', [ Sale::class ]);
+
+        if ($response->allowed()) {
+            $sales = Sale::where('station_id', $id)
+                ->where('product_code_id', $product_code_id)
+                ->where('date_of_entry', $date)
+                ->get();
+            
+            $data = SaleResource::collection($sales)->flatten();
+
+            if($data->count() > 0) {
+                $items = $data->toArray($request);
         
-        $data = SaleResource::collection($sales)->flatten();
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 20;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
+        
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        if($data->count() > 0) {
-            $items = $data->toArray($request);
-    
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 20;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
-    
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
-
-            $paginator->withPath(config('app.url').'/api/v2/station-day-sales/'.$id.'/'.$product_code_id.'/'.$date);
-            return response()->json($paginator);
+                $paginator->withPath(config('app.url').'/api/v2/station-day-sales/'.$id.'/'.$product_code_id.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
         } else {
+            return $response->message();
+        }
+    }
+
+    public function getSaleToEdit($id)
+    {
+        $sale = Sale::findOrFail($id);
+
+        return response()->json([
+            'sale' => $sale
+        ]);
+    }
+
+    public function update($id, Request $request, Sale $sale) 
+    {
+
+        $sale = Sale::findOrFail($id);
+        
+        $response = Gate::inspect('update', $sale);
+        // dd($request->all());
+
+        if ($response->allowed()) {
+            $sale->product_id = $request->get('product_id');
+            $sale->unit_price = $request->get('unit_price');
+            $sale->pump_code = $request->get('pump_code');
+            $sale->start_metre = $request->get('start_metre');
+            $sale->end_metre = $request->get('end_metre');
+            $sale->quantity_sold = $request->get('quantity_sold');
+            $sale->amount = $request->get('amount');
+            $sale->date_of_entry = $request->get('date_of_entry');
+    
+            $sale->save();  
+       
             return response()->json([
-                'message' => 'No Record Available!'
+                'success' => 'Sale updated successfully'
             ]);
+        } else {
+            return $response->message();
         }
     }
 
     public function delete($ids, Sale $sale) 
     {
-        // $response = Gate::inspect('delete', $sale);
+        $response = Gate::inspect('delete', $sale);
         // dd($request->all());
 
-        // if ($response->allowed()) {
+        if ($response->allowed()) {
             $id = explode(",", $ids);
             $sales_to_delete = Sale::find($id);
 
@@ -119,8 +168,8 @@ class SalesController extends Controller
                     ['status' => 'Sale has been deleted']
                 );
             }
-        // } else {
-        //     return $response->message();
-        // }
+        } else {
+            return $response->message();
+        }
     }
 }
