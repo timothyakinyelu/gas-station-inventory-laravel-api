@@ -29,6 +29,28 @@ Route::group(['prefix' => 'v2'], function(){
         */
         Route::get('me', 'Api\AuthController@me');
 
+        /*
+        |-------------------------------------------------------------------------------
+        | Display all products types
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/product-types
+        | Controller:     Api\ProductsController@productType
+        | Method:         GET
+        | Description:    Fetch all products from db
+        */
+        Route::get('product-types', 'Api\ProductsController@productType');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display all products codes
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/product-codes
+        | Controller:     Api\ProductsController@productCode
+        | Method:         GET
+        | Description:    Fetch all products from db
+        */
+        Route::get('product-codes', 'Api\ProductsController@productCode');
+
         Route::group(['middleware' => ['admin']], function() {
             /*
             |-------------------------------------------------------------------------------
@@ -40,6 +62,51 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Fetch all products from db
             */
             Route::get('products', 'Api\ProductsController@index');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Add a new product
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/products
+            | Controller:     Api\ProductsController@store
+            | Method:         POST
+            | Description:    Store a new product in the db
+            */
+            Route::post('/products', 'Api\ProductsController@store');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get a product to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/products/{id}/edit
+            | Controller:     Api\ProductsController@getProductToEdit
+            | Method:         GET
+            | Description:    Fetch a product to edit
+            */
+            Route::get('products/{id}/edit', 'Api\ProductsController@getProductToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update a product
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/products/{id}/update
+            | Controller:     Api\ProductsController@update
+            | Method:         PUT
+            | Description:    Update a product in the db
+            */
+            Route::put('products/{id}/update', 'Api\ProductsController@update');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete a product
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/products/{id}
+            | Controller:     Api\ProductsController@delete
+            | Method:         DELETE
+            | Description:    Remove a product from the db
+            */
+            Route::delete('products/{id}', 'Api\ProductsController@delete');
+
             /*
             |-------------------------------------------------------------------------------
             | Display all service outlets of a company

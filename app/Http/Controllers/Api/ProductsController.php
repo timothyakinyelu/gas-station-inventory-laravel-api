@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Resources\ProductResource;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Gate;
+
 use App\Product;
+use App\productCode;
+use App\productType;
 
 class ProductsController extends Controller
 {
@@ -36,6 +39,100 @@ class ProductsController extends Controller
             return response()->json([
                 'message' => 'No Records Found!'
             ], 404);
+        } else {
+            return $response->message();
+        }
+    }
+
+    public function productType() 
+    {
+        return ProductType::orderBy('id', 'DESC')->get();
+    }
+
+    public function productCode() 
+    {
+        return ProductCode::orderBy('id', 'DESC')->get();
+    }
+
+    public function store(NewProductRequest $request) 
+    {
+        $response = Gate::inspect('create', [ Product::class]);
+
+        if ($response->allowed()) {
+            // The action is authorized...
+            $product = Product::firstOrCreate(
+                ['name' => $request->input('name')],
+                [
+                    'product_type_id' => $request->input('product_type_id'), 
+                    'product_code_id' => $request->input('product_code_id'),
+                    'price' => $request->input('price')
+                ]
+            );
+    
+            if($product->wasRecentlyCreated) {
+                return response()->json([
+                    'product' => $product,
+                    'success' => 'New Product Created Successfully!'
+                ], 200);
+            }
+            
+            return response()->json([
+                'error' => 'Product already exists!'
+            ], 412);
+
+        } else {
+            return $response->message();
+        }
+    }
+
+    public function getProductToEdit($id)
+    {
+        $product = Product::findOrFail($id);
+
+        return response()->json([
+            'product' => $product
+        ]);
+    }
+
+    public function update($id, Request $request) 
+    {
+        // dd($request->all());
+        $product= Product::find($id);
+
+        $response = Gate::inspect('update', $product);
+        // dd($request->all());
+
+        if ($response->allowed()) {
+            $product->product_code_id = $request->get('product_code_id');
+            $product->name = $request->get('name');
+            $product->price = $request->get('price');
+    
+            $product->save();  
+       
+            return response()->json([
+                'success' => 'Product updated successfully'
+            ]);
+        } else {
+            return $response->message();
+        }
+    }
+
+    public function delete($ids, Product $product) 
+    {
+        $response = Gate::inspect('delete', $product);
+        // dd($request->all());
+
+        if ($response->allowed()) {
+            $id = explode(",", $ids);
+            $products_to_delete = Product::find($id);
+
+            $product = Product::whereIn('id', $id)->delete();
+
+            if($sale) {
+                return response()->json(
+                    ['status' => 'Product has been deleted']
+                );
+            }
         } else {
             return $response->message();
         }
