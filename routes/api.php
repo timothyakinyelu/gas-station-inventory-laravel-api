@@ -16,6 +16,27 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v2'], function(){
     Route::post('login', 'Api\AuthController@login');
+    /*
+    |-------------------------------------------------------------------------------
+    | Request for a password reset link
+    |-------------------------------------------------------------------------------
+    | URL:            /api/v2/settings/sendPasswordResetLink
+    | Controller:     Api\ResetPasswordController@sendEmail
+    | Method:         POST
+    | Description:    Reset password link
+    */
+    Route::post('/settings/sendPasswordResetLink', 'Api\ResetPasswordController@sendEmail');
+
+    /*
+    |-------------------------------------------------------------------------------
+    | Change password
+    |-------------------------------------------------------------------------------
+    | URL:            /api/v2/settings/settings/resetPassword
+    | Controller:     Api\ChangePasswordController@sendEmail
+    | Method:         POST
+    | Description:    Change password
+    */
+    Route::post('/settings/resetPassword', 'Api\ChangePasswordController@process');
 
     Route::group(['middleware' => ['auth:api']], function() {
         /*
