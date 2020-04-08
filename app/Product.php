@@ -11,6 +11,11 @@ class Product extends Model
     public $timestamps = false;
     
     //Relationship
+    public function company() 
+    {
+        return $this->belongsTo('\App\Company');
+    }
+    
     public function product_type() 
     {
         return $this->belongsTo('\App\ProductType');

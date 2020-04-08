@@ -14,12 +14,17 @@ use App\productType;
 
 class ProductsController extends Controller
 {
-    public function index(Request $request) 
+    public function index($id, Request $request) 
     {
         $response = Gate::inspect('viewAny', [ Product::class ]);
 
         if ($response->allowed()) {
-            $products = Product::orderBy('id', 'DESC')->get();
+            $dec = \base64_decode($id);
+
+            $products = Product::where('company_id', $dec)
+                ->orderBy('id', 'DESC')
+                ->get();
+
             $data = ProductResource::collection($products);
 
             $items = $data->toArray($request);

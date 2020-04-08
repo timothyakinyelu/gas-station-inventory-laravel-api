@@ -22,4 +22,14 @@ class Company extends Model
     {
         return $this->hasMany('\App\Station');
     }
+
+    public function employees() 
+    {
+        return $this->hasMany('\App\Employee');
+    }
+
+    public function products() 
+    {
+        return $this->hasMany('\App\Product');
+    }
 }

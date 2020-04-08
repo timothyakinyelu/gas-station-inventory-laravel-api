@@ -54,14 +54,69 @@ Route::group(['prefix' => 'v2'], function(){
         Route::group(['middleware' => ['admin']], function() {
             /*
             |-------------------------------------------------------------------------------
+            | Display all users of a company
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/users/{id}
+            | Controller:     Api\UsersController@index
+            | Method:         GET
+            | Description:    Fetch all users in a company
+            */
+            Route::get('users/{id}', 'Api\UsersController@index');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Add a new user
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/users
+            | Controller:     Api\UsersController@create
+            | Method:         POST
+            | Description:    Store a new user in the db
+            */
+            Route::post('users', 'Api\UsersController@create');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get User to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/users/{id}/edit
+            | Controller:     Api\UsersController@getUserToEdit
+            | Method:         GET
+            | Description:    Fetch a user to edit
+            */
+            Route::get('users/{id}/edit', 'Api\UsersController@getUserToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update a user
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/users/{id}/update
+            | Controller:     Api\UsersController@update
+            | Method:         PUT
+            | Description:    Update a user
+            */
+            Route::put('users/{id}/update', 'Api\UsersController@update');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete a user
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/users/{id}
+            | Controller:     Api\UsersController@delete
+            | Method:         DELETE
+            | Description:    Remove a user from the db
+            */
+            Route::delete('users/{id}', 'Api\UsersController@delete');
+
+            /*
+            |-------------------------------------------------------------------------------
             | Display all products
             |-------------------------------------------------------------------------------
-            | URL:            /api/v2/products
+            | URL:            /api/v2/products/{id}
             | Controller:     Api\ProductsController@index
             | Method:         GET
             | Description:    Fetch all products from db
             */
-            Route::get('products', 'Api\ProductsController@index');
+            Route::get('products/{id}', 'Api\ProductsController@index');
 
             /*
             |-------------------------------------------------------------------------------
@@ -205,6 +260,17 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Delete sale item from table
             */
             Route::delete('sales/{id}', 'Api\SalesController@delete');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Search for employee
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/employees/search
+            | Controller:     Api\EmployeesController@employeeSearch
+            | Method:         GET
+            | Description:    Search in db
+            */
+            Route::get('/employees/{id}/search', 'Api\EmployeesController@employeeSearch');
         });
     });
 });
