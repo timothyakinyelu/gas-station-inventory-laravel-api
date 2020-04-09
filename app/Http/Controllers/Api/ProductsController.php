@@ -36,7 +36,7 @@ class ProductsController extends Controller
 
             $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-            $paginator->withPath(config('app.url').'/api/v2/products');
+            $paginator->withPath(config('app.url').'/api/v2/products/'.$dec);
 
             if($items !== []) {
                 return response()->json($paginator);

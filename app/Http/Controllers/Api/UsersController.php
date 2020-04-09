@@ -42,7 +42,7 @@ class UsersController extends Controller
 
             $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-            $paginator->withPath(config('app.url').'/api/v2/users');
+            $paginator->withPath(config('app.url').'/api/v2/users/'.$dec);
 
             if($items !== []) {
                 return response()->json($paginator);

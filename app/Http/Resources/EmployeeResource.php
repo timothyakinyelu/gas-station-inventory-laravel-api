@@ -23,7 +23,7 @@ class EmployeeResource extends JsonResource
             'name' => $this->firstName . ' ' . $this->lastName,
             'phone' => $this->phone,
             'role' => $this->role,
-            'datehired' => (Carbon::parse($this->hired)->toDateString()),
+            'date_hired' => (Carbon::parse($this->hired)->toDateString()),
         ];
     }
 }

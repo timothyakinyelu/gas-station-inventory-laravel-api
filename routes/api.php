@@ -284,6 +284,61 @@ Route::group(['prefix' => 'v2'], function(){
 
             /*
             |-------------------------------------------------------------------------------
+            | Display all products
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/employees/{id}
+            | Controller:     Api\EmployeesController@index
+            | Method:         GET
+            | Description:    Fetch all employees from db
+            */
+            Route::get('/employees/{id}', 'Api\EmployeesController@index');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Add a new employee
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/employees
+            | Controller:     Api\EmployeesController@store
+            | Method:         POST
+            | Description:    Store a new employee in the db
+            */
+            Route::post('/employees', 'Api\EmployeesController@store');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get an employee to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/employees/{id}/edit
+            | Controller:     Api\EmployeesController@getEmployeeToEdit
+            | Method:         GET
+            | Description:    Fetch an employee to edit
+            */
+            Route::get('employees/{id}/edit', 'Api\EmployeesController@getEmployeeToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update an employee
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/employees/{id}/update
+            | Controller:     Api\EmployeesController@update
+            | Method:         PUT
+            | Description:    Update an employee in the db
+            */
+            Route::put('employees/{id}/update', 'Api\EmployeesController@update');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete an employee
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/employees/{id}
+            | Controller:     Api\EmployeesController@delete
+            | Method:         DELETE
+            | Description:    Remove an employee record from the db
+            */
+            Route::delete('employees/{id}/delete', 'Api\EmployeesController@delete');
+
+            /*
+            |-------------------------------------------------------------------------------
             | Search for employee
             |-------------------------------------------------------------------------------
             | URL:            /api/v2/employees/search
