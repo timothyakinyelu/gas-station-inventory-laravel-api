@@ -26,17 +26,24 @@ class EmployeesController extends Controller
                 ->get();
             $data = EmployeeResource::collection($employees);
 
-            $items = $data->toArray($request);
+            if($data->count() > 0) {
 
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 20;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
+                $items = $data->toArray($request);
 
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 20;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-            $paginator->withPath(config('app.url').'/api/v2/employees/'.$dec);
-            return response()->json($paginator);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+                $paginator->withPath(config('app.url').'/api/v2/employees/'.$dec);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
         } else {
             return $response->message();
         }

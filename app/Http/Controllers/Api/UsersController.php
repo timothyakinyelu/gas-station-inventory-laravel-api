@@ -33,23 +33,24 @@ class UsersController extends Controller
 
             $data = Users::collection($users);
 
-            $items = $data->toArray($request);
+            if($data->count() > 0) {
+                $items = $data->toArray($request);
 
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 10;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-            $paginator->withPath(config('app.url').'/api/v2/users/'.$dec);
+                $paginator->withPath(config('app.url').'/api/v2/users/'.$dec);
 
-            if($items !== []) {
                 return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
             }
-            return response()->json([
-                'error' => 'No Records Available!'
-            ], 401);
         } else {
             return $response->message();
         }

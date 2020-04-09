@@ -27,23 +27,25 @@ class ProductsController extends Controller
 
             $data = ProductResource::collection($products);
 
-            $items = $data->toArray($request);
+            if($data->count() > 0) {
 
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 20;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
+                $items = $data->toArray($request);
 
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 20;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-            $paginator->withPath(config('app.url').'/api/v2/products/'.$dec);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-            if($items !== []) {
-                return response()->json($paginator);
+                $paginator->withPath(config('app.url').'/api/v2/products/'.$dec);
+
+            return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
             }
-            return response()->json([
-                'message' => 'No Records Found!'
-            ], 404);
         } else {
             return $response->message();
         }

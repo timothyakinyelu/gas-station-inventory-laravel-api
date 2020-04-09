@@ -347,6 +347,50 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Search in db
             */
             Route::get('/employees/{id}/search', 'Api\EmployeesController@employeeSearch');
+
+             /*
+            |-------------------------------------------------------------------------------
+            | Display all stocks
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v1/stocks/{id}
+            | Controller:     Api\StocksController@stationStocks
+            | Method:         GET
+            | Description:    Fetch all stock from db
+            */
+            Route::get('stocksbystation/{id}', 'Api\StocksController@getStocksByStation');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get stock to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/stocks/{id}/edit
+            | Controller:     Api\SuppliesController@getSupplyToEdit
+            | Method:         GET
+            | Description:    Fetch a supply to edit
+            */
+            Route::get('stocks/{id}/edit', 'Api\StocksController@getStockToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update a stock
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/stocks/{id}/update
+            | Controller:     Api\StocksController@update
+            | Method:         PUT
+            | Description:    Update a stock
+            */
+            Route::put('stocks/{id}/update', 'Api\StocksController@update');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete a stock
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/stocks/{id}
+            | Controller:     Api\StocksController@delete
+            | Method:         DELETE
+            | Description:    Remove a stock record from the db
+            */
+            Route::delete('stocks/{id}', 'Api\StocksController@delete');
         });
     });
 });
