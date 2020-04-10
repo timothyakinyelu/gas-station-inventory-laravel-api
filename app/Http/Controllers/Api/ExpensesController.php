@@ -65,7 +65,7 @@ class ExpensesController extends Controller
 
         $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath('/api/v1/expensesbystation/'.$id);
+        $paginator->withPath(config('app.url').'/api/v2/expensesbystation/'.$id);
         return response()->json($paginator);
     }
 
@@ -93,7 +93,7 @@ class ExpensesController extends Controller
 
                 $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-                $paginator->withPath('/api/v2/station-day-expense/'.$id.'/'.$date);
+                $paginator->withPath(config('app.url').'/api/v2/station-day-expense/'.$id.'/'.$date);
                 return response()->json($paginator);
             } else {
                 return response()->json([
@@ -132,7 +132,7 @@ class ExpensesController extends Controller
 
         $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath('http://localhost:8000/api/v1/expenses/expense/'.$stationId.'/'.$date);
+        $paginator->withPath(config('app.url').'/api/v2/expenses/expense/'.$stationId.'/'.$date);
         return response()->json($paginator);
     }
 
