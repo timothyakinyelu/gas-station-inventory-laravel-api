@@ -435,6 +435,61 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Remove a supply record from the db
             */
             Route::delete('supplies/{id}', 'Api\SuppliesController@delete');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Display all expenses
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/expenses/{id}
+            | Controller:     Api\ExpensesController@getExpensesByStation
+            | Method:         GET
+            | Description:    Fetch all expenses from db
+            */
+            Route::get('expensesbystation/{id}', 'Api\ExpensesController@getExpensesByStation');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Display details day expense
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/station-day-expense/{id}/{date}
+            | Controller:     Api\ExpensesController@getExpenseDetails
+            | Method:         GET
+            | Description:    Fetch details of a cumulative expense from db
+            */
+            Route::get('station-day-expense/{id}/{date}', 'Api\ExpensesController@getExpenseDetails');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get an expense to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/expenses/{id}/edit
+            | Controller:     Api\ExpensesController@getExpenseToEdit
+            | Method:         GET
+            | Description:    Fetch an expense to edit
+            */
+            Route::get('expenses/{id}/edit', 'Api\ExpensesController@getExpenseToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update an expense
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/expenses/{id}/update
+            | Controller:     Api\ExpensesController@update
+            | Method:         PUT
+            | Description:    Update an expense in the db
+            */
+            Route::put('expenses/{id}/update', 'Api\ExpensesController@update');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete an expense
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/expenses/{id}
+            | Controller:     Api\ExpensesController@delete
+            | Method:         DELETE
+            | Description:    Remove an expense record from the db
+            */
+            Route::delete('expenses/{id}', 'Api\ExpensesController@delete');
         });
     });
 });
