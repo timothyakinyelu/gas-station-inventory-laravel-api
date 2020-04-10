@@ -352,7 +352,7 @@ Route::group(['prefix' => 'v2'], function(){
             |-------------------------------------------------------------------------------
             | Display all stocks
             |-------------------------------------------------------------------------------
-            | URL:            /api/v1/stocks/{id}
+            | URL:            /api/v2/stocks/{id}
             | Controller:     Api\StocksController@stationStocks
             | Method:         GET
             | Description:    Fetch all stock from db
@@ -391,6 +391,50 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Remove a stock record from the db
             */
             Route::delete('stocks/{id}', 'Api\StocksController@delete');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Display all supplies
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/supplies/{id}
+            | Controller:     Api\SuppliesController@stationStocks
+            | Method:         GET
+            | Description:    Fetch all supply from db
+            */
+            Route::get('suppliesbystation/{id}', 'Api\SuppliesController@getSuppliesByStation');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Get supply to edit
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/supplies/{id}/edit
+            | Controller:     Api\SuppliesController@getSupplyToEdit
+            | Method:         GET
+            | Description:    Fetch a supply to edit
+            */
+            Route::get('supplies/{id}/edit', 'Api\SuppliesController@getSupplyToEdit');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Update a supply
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/supplies/{id}/update
+            | Controller:     Api\SuppliesController@update
+            | Method:         PUT
+            | Description:    Update a supply
+            */
+            Route::put('supplies/{id}/update', 'Api\SuppliesController@update');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Delete a supply
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/supplies/{id}
+            | Controller:     Api\SuppliesController@delete
+            | Method:         DELETE
+            | Description:    Remove a supply record from the db
+            */
+            Route::delete('supplies/{id}', 'Api\SuppliesController@delete');
         });
     });
 });

@@ -3,25 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\StockResource;
+use App\Http\Resources\SupplyResource;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
-use App\Stock;
+use App\Supply;
 
-class StocksController extends Controller
+class SuppliesController extends Controller
 {
-    public function getStocksByStation($id, Request $request) {
-
-        $response = Gate::inspect('viewAny', [ Stock::class ]);
+    public function getSuppliesByStation($id, Request $request) 
+    {
+        $response = Gate::inspect('viewAny', [ Supply::class ]);
 
         if ($response->allowed()) {
-            $stocks = Stock::where('station_id', $id)
-                ->orderBy('date_of_inventory', 'DESC')
+            $supplies = Supply::where('station_id', $id)
+                ->orderBy('date_of_supply', 'DESC')
                 ->get();
 
-            $data = StockResource::collection($stocks);
+            $data = SupplyResource::collection($supplies);
 
             if($data->count() > 0) {
 
@@ -34,7 +34,7 @@ class StocksController extends Controller
 
                 $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-                $paginator->withPath(config('app.url').'/api/v2/stocksbystation'.$id);
+                $paginator->withPath(config('app.url').'/api/v2/suppliesbystation'.$id);
                 return response()->json($paginator);
             } else {
                 return response()->json([
@@ -46,24 +46,24 @@ class StocksController extends Controller
         }
     }
 
-    public function getStockToEdit($id)
+    public function getSupplyToEdit($id)
     {
-        $stock = Stock::findOrFail($id);
+        $supply = Supply::findOrFail($id);
 
         return response()->json([
-            'stock' => $stock
+            'supply' => $supply
         ]);
     }
 
-    public function getDayStocksByProductId($stationId, $productId, $date, Request $request) 
+    public function getDaySuppliesByProductId($stationId, $productId, $date, Request $request) 
     {
-        $stocks = Stock::where('station_id', $stationId)
+        $supplies = Supply::where('station_id', $stationId)
                 ->where('product_id', $productId)
-                ->where('date_of_inventory', $date)
+                ->where('date_of_supply', $date)
                 ->get();
         
        
-        $data = StockCollection::collection($stocks);
+        $data = SupplyCollection::collection($supplies);
 
         $items = $data->toArray($request);
 
@@ -74,20 +74,20 @@ class StocksController extends Controller
 
         $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath(config('app.url').'/api/v2/stocks/stock/'.$stationId.'/'.$productId.'/'.$date);
+        $paginator->withPath(config('app.url').'/api/v2/supplies/supply/'.$stationId.'/'.$productId.'/'.$date);
         return response()->json($paginator);
     }
 
-    public function getDayStocksByProductCodeId($stationId, $productCodeId, $date, Request $request) 
+    public function getDaySuppliesByProductCodeId($stationId, $productCodeId, $date, Request $request) 
     {
         // dd($request->all());
-        $stocks = Stock::where('station_id', $stationId)
+        $supplies = Supply::where('station_id', $stationId)
                 ->where('product_code_id', $productCodeId)
-                ->where('date_of_inventory', $date)
+                ->where('date_of_supply', $date)
                 ->get();
         
        
-        $data = StockCollection::collection($stocks);
+        $data = SupplyCollection::collection($supplies);
 
         $items = $data->toArray($request);
 
@@ -98,14 +98,14 @@ class StocksController extends Controller
 
         $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath(config('app.url').'/api/v2/stocks/stock/'.$stationId.'/'.$productCodeId.'/'.$date);
+        $paginator->withPath(config('app.url').'/api/v2/supplies/supply/'.$stationId.'/'.$productCodeId.'/'.$date);
         return response()->json($paginator);
     }
 
-    public function storeWetStock(Request $request) 
+    public function storeWetSupply(Request $request) 
     {
         // dd($request->all());
-        $response = Gate::inspect('create', [Stock::class]);
+        $response = Gate::inspect('create', [ Supply::class]);
         // dd($request->all());
         $items = json_decode($request->items, true);
         $List = array();
@@ -115,99 +115,86 @@ class StocksController extends Controller
                 // dd($request->get('product_code_id'));
                 // dd($value[$key]);
                 $List[] = $value;
-                $item = Stock::create([
+                $supply = Supply::create([
                     'station_id' => $request->get('station_id'),
                     'product_id' => $request->get('product_id'), 
                     'product_code_id' => $request->get('product_code_id'), 
-                    'date_of_inventory' => $request->get('date_of_inventory'), 
+                    'date_of_supply' => $request->get('date_of_supply'), 
+                    'supply_price' => $request->get('supply_price'), 
                     'tank_code' => $List[$key]['tankCode'],
-                    'open_stock' => $List[$key]['startStock'],
-                    'close_stock' => $List[$key]['endStock'], 
-                    'inventory_sold' => $List[$key]['quantitySold'],
                     'inventory_received' => $List[$key]['received']
                 ]);
             }
             return response()->json([
-                'success' => 'Stock Entered Successfully!'
+                'success' => 'Supply Entered Successfully!'
             ]);
         } else {
             return $response->message();
         }
     }
 
-    public function storeDryStock(Request $request) 
+    public function storeDrySupply(Request $request) 
     {
-        // dd($request->all());
-        $response = Gate::inspect('create', [ Stock::class]);
-        // dd($request->all());
+        $response = Gate::inspect('create', [Supply::class]);
+
         $items = json_decode($request->items, true);
         $List = array();
 
         if ($response->allowed()) {
             foreach ($items as $key => $value) {
-                // dd($request->get('date_of_inventory'));
+
                 $List[] = $value;
-                $stock = Stock::create([
+                $supply = Supply::create([
                     'station_id' => $request->get('station_id'),
-                    'product_id' => $List[$key]['productID'],
                     'product_code_id' => $request->get('product_code_id'), 
-                    'date_of_inventory' => $request->get('date_of_inventory'),
-                    'open_stock' => $List[$key]['startStock'],
-                    'close_stock' => $List[$key]['endStock'], 
-                    'inventory_sold' => $List[$key]['quantitySold'],
-                    'inventory_received' => $List[$key]['received']
+                    'date_of_supply' => $request->get('date_of_supply'),
+                    'product_id' => $List[$key]['productID'],
+                    'inventory_received' => $List[$key]['received'],
+                    'supply_price' => $List[$key]['supplyPrice'], 
                 ]);
             }
             return response()->json([
-                'success' => 'Stock Entered Successfully!'
+                'success' => 'Supply Entered Successfully!'
             ]);
         } else {
             return $response->message();
         }
-        // return $List;
     }
 
     public function update($id, Request $request) 
     {
-        // dd($request->all());
-        $stock = Stock::find($id);
+        $supply = Supply::find($id);
 
-        $response = Gate::inspect('update', $stock);
-        // dd($request->all());
-
+        $response = Gate::inspect('update', $supply);
+        
         if ($response->allowed()) {
-            $stock->product_id = $request->get('product_id');
-            $stock->tank_code = $request->get('tank_code');
-            $stock->open_stock = $request->get('open_stock');
-            $stock->close_stock = $request->get('close_stock');
-            $stock->inventory_sold = $request->get('inventory_sold');
-            $stock->inventory_received = $request->get('inventory_received');
-            $stock->date_of_inventory = $request->get('date_of_inventory');
+            $supply->product_id = $request->get('product_id');
+            $supply->inventory_received = $request->get('inventory_received');
+            $supply->supply_price = $request->get('supply_price');
+            $supply->date_of_supply = $request->get('date_of_supply');
     
-            $stock->save();  
+            $supply->save();  
        
             return response()->json([
-                'success' => 'Stock has been updated successfully'
+                'success' => 'Supply has been updated successfully'
             ]);
         } else {
             return $response->message();
         }
     }
 
-    public function delete($ids, Stock $stock) 
+    public function delete($ids, Supply $supply) 
     {
-        $response = Gate::inspect('delete', $stock);
-        // dd($request->all());
-
+        $response = Gate::inspect('delete', $supply);
         if ($response->allowed()) {
             $id = explode(",", $ids);
-            $stocks_to_delete = Stock::find($id);
 
-            $stock = Stock::whereIn('id', $id)->delete();
 
-            if($stock) {
+            $supply = Supply::whereIn('id', $id)->delete();
+
+            if($supply) {
                 return response()->json(
-                    ['status' => 'Stock has been deleted']
+                    ['status' => 'Data has been deleted']
                 );
             }
         } else {
