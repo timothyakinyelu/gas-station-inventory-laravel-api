@@ -124,6 +124,125 @@ class SalesController extends Controller
         ]);
     }
 
+    public function getDaySalesByProductId($stationId, $productId, $date, Request $request) 
+    {
+        $sales = Sale::where('station_id', $stationId)
+                ->where('product_id', $productId)
+                ->where('date_of_entry', $date)
+                ->get();
+        
+       
+        $data = SaleResource::collection($sales)->flatten();
+        if($data->count() > 0) {
+
+            $items = $data->toArray($request);
+
+            $currentPage = Paginator::resolveCurrentPage();
+            $perPage = 10;
+            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+            $total = count($items);
+
+            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+            $paginator->withPath(config('app.url').'/api/v2/sales/sale/'.$stationId.'/'.$productId.'/'.$date);
+            return response()->json($paginator);
+        } else {
+            return response()->json([
+                'message' => 'No Record Available!'
+            ]);
+        }
+    }
+
+    public function getDaySalesByProductCodeId($stationId, $productCodeId, $date, Request $request) 
+    {
+        $sales = Sale::where('station_id', $stationId)
+                ->where('product_code_id', $productCodeId)
+                ->where('date_of_entry', $date)
+                ->get();
+        
+       
+        $data = SaleResource::collection($sales)->flatten();
+
+        if($data->count() > 0) {
+            $items = $data->toArray($request);
+
+            $currentPage = Paginator::resolveCurrentPage();
+            $perPage = 10;
+            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+            $total = count($items);
+
+            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+            $paginator->withPath(config('app.url').'/api/v2/sales/sale/'.$stationId.'/'.$productCodeId.'/'.$date);
+            return response()->json($paginator);
+        } else {
+            return response()->json([
+                'message' => 'No Record Available!'
+            ]);
+        }
+    }
+
+    public function storeWet(Request $request) 
+    {
+        $response = Gate::inspect('create', [Sale::class]);
+
+        $foreCourts = json_decode($request->foreCourts, true);
+        $List = array();
+
+        if ($response->allowed()) {
+            foreach ($foreCourts as $key => $value) {
+
+                $List[] = $value;
+                $sale = Sale::create([
+                    'station_id' => $request->get('station_id'),
+                    'product_id' => $request->get('product_id'), 
+                    'product_code_id' => $request->get('product_code_id'), 
+                    'unit_price' => $request->get('unit_price'),
+                    'date_of_entry' => $request->get('date_of_entry'), 
+                    'pump_code' => $List[$key]['pumpCode'],
+                    'start_metre' => $List[$key]['startMetre'],
+                    'end_metre' => $List[$key]['endMetre'], 
+                    'quantity_sold' => $List[$key]['quantitySold'],
+                    'amount' => $List[$key]['amount']
+                ]);
+            }
+            return response()->json([
+                'success' => 'Sale Completed Successfully!'
+            ]);
+        } else {
+            return $response->message();
+        }
+    }
+
+    public function storeDry(Request $request) 
+    {
+        $response = Gate::inspect('create', [ Sale::class]);
+
+        $foreCourts = json_decode($request->foreCourts, true);
+        $List = array();
+
+        if ($response->allowed()) {
+            foreach ($foreCourts as $key => $value) {
+
+                $List[] = $value;
+                $sale = Sale::create([
+                    'station_id' => $request->get('station_id'),
+                    'product_id' => $List[$key]['productID'],
+                    'product_code_id' => $request->get('product_code_id'), 
+                    'unit_price' => $List[$key]['unitPrice'],
+                    'date_of_entry' => $request->get('date_of_entry'),
+                    'quantity_sold' => $List[$key]['quantitySold'],
+                    'amount' => $List[$key]['amount']
+                ]);
+            }
+            return response()->json([
+                'success' => 'Sale Completed Successfully!'
+            ]);
+        } else {
+            return $response->message();
+        }
+    }
+
     public function update($id, Request $request, Sale $sale) 
     {
 

@@ -40,7 +40,7 @@ class ProductsController extends Controller
 
                 $paginator->withPath(config('app.url').'/api/v2/products/'.$dec);
 
-            return response()->json($paginator);
+                return response()->json($paginator);
             } else {
                 return response()->json([
                     'message' => 'No Record Available!'
@@ -101,13 +101,22 @@ class ProductsController extends Controller
         ]);
     }
 
+    public function getProductByCodeId($id) 
+    {
+        $products = Product::where('product_code_id', $id)
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return response()->json([
+            'products' => ProductResource::collection($products)
+        ]);
+    }
+
     public function update($id, Request $request) 
     {
-        // dd($request->all());
         $product= Product::find($id);
 
         $response = Gate::inspect('update', $product);
-        // dd($request->all());
 
         if ($response->allowed()) {
             $product->product_code_id = $request->get('product_code_id');

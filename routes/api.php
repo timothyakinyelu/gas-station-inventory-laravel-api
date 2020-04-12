@@ -52,6 +52,50 @@ Route::group(['prefix' => 'v2'], function(){
 
         /*
         |-------------------------------------------------------------------------------
+        | Store wet sales
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/sales/sale/wet
+        | Controller:     Api\SalesController@storeWet
+        | Method:         POST
+        | Description:    Store a sale in the db
+        */
+        Route::post('sales/sale/wet', 'Api\SalesController@storeWet');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Store dry sales
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/sales/sale/dry
+        | Controller:     Api\SalesController@storeDry
+        | Method:         POST
+        | Description:    Store a sale in the db
+        */
+        Route::post('sales/sale/dry', 'Api\SalesController@storeDry');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display wet sales by product id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/sales/sale/wet/{stationId}/{productId}/{date}
+        | Controller:     Api\SalesController@getDaySalesByProductId
+        | Method:         GET
+        | Description:    Fetch sales by product id from db
+        */
+        Route::get('sales/sale/wet/{stationId}/{productId}/{date}', 'Api\SalesController@getDaySalesByProductId');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display dry sales by product id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/sales/sale/dry/{stationId}/{productCodeId}/{date}
+        | Controller:     Api\SalesController@getDaySalesByProductId
+        | Method:         GET
+        | Description:    Fetch sales by product id from db
+        */
+        Route::get('sales/sale/dry/{stationId}/{productCodeId}/{date}', 'Api\SalesController@getDaySalesByProductCodeId');
+
+        /*
+        |-------------------------------------------------------------------------------
         | Display all products types
         |-------------------------------------------------------------------------------
         | URL:            /api/v2/product-types
@@ -71,6 +115,17 @@ Route::group(['prefix' => 'v2'], function(){
         | Description:    Fetch all products from db
         */
         Route::get('product-codes', 'Api\ProductsController@productCode');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display product by product code id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v1/products/{id}
+        | Controller:     Api\ProductsController@getProductByCodeId
+        | Method:         GET
+        | Description:    Fetch product from db
+        */
+        Route::get('productCode/products/{id}', 'Api\ProductsController@getProductByCodeId');
 
         Route::group(['middleware' => ['admin']], function() {
             /*
