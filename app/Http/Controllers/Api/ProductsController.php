@@ -101,9 +101,12 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function getProductByCodeId($id) 
+    public function getProductByCodeId($companyID, $id) 
     {
-        $products = Product::where('product_code_id', $id)
+        $dec = \base64_decode($companyID);
+
+        $products = Product::where('company_id', $dec)
+                    ->where('product_code_id', $id)
                     ->orderBy('id', 'desc')
                     ->get();
 

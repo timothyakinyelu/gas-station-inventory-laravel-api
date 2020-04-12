@@ -96,6 +96,50 @@ Route::group(['prefix' => 'v2'], function(){
 
         /*
         |-------------------------------------------------------------------------------
+        | Store wet stocks
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/stocks/stock/wet
+        | Controller:     Api\StocksController@storeWetStock
+        | Method:         POST
+        | Description:    Store a stock in the db
+        */
+        Route::post('stocks/stock/wet', 'Api\StocksController@storeWetStock');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Store dry sales
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/stocks/stock/dry
+        | Controller:     Api\StocksController@storeDryStock
+        | Method:         POST
+        | Description:    Store a stock in the db
+        */
+        Route::post('stocks/stock/dry', 'Api\StocksController@storeDryStock');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display wet stocks by product id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/stocks/stock/wet/{stationId}/{productId}/{date}
+        | Controller:     Api\StocksController@getDayStocksByProductId
+        | Method:         GET
+        | Description:    Fetch stocks by product id from db
+        */
+        Route::get('stocks/stock/wet/{stationId}/{productId}/{date}', 'Api\StocksController@getDayStocksByProductId');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display dry stocks by product id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/stocks/stock/dry/{stationId}/{productCodeId}/{date}
+        | Controller:     Api\StocksController@getDayStocksByProductId
+        | Method:         GET
+        | Description:    Fetch stocks by product id from db
+        */
+        Route::get('stocks/stock/dry/{stationId}/{productCodeId}/{date}', 'Api\StocksController@getDayStocksByProductCodeId');
+
+        /*
+        |-------------------------------------------------------------------------------
         | Display all products types
         |-------------------------------------------------------------------------------
         | URL:            /api/v2/product-types
@@ -125,7 +169,7 @@ Route::group(['prefix' => 'v2'], function(){
         | Method:         GET
         | Description:    Fetch product from db
         */
-        Route::get('productCode/products/{id}', 'Api\ProductsController@getProductByCodeId');
+        Route::get('productCode/products/{companyID}/{id}', 'Api\ProductsController@getProductByCodeId');
 
         Route::group(['middleware' => ['admin']], function() {
             /*

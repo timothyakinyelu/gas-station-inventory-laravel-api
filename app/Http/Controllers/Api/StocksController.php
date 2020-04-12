@@ -55,51 +55,77 @@ class StocksController extends Controller
         ]);
     }
 
-    public function getDayStocksByProductId($stationId, $productId, $date, Request $request) 
+    public function getDayStocksByProductId($stationId, $productId, $date, Request $request, Stock $stock) 
     {
-        $stocks = Stock::where('station_id', $stationId)
-                ->where('product_id', $productId)
-                ->where('date_of_inventory', $date)
-                ->get();
+        $response = Gate::inspect('view', [ $stock ]);
+
+        if ($response->allowed()) {
+
+            $stocks = Stock::where('station_id', $stationId)
+                    ->where('product_id', $productId)
+                    ->where('date_of_inventory', $date)
+                    ->get();
+            
         
-       
-        $data = StockCollection::collection($stocks);
+            $data = StockResource::collection($stocks);
 
-        $items = $data->toArray($request);
+            if($data->count() > 0) {
 
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-        $total = count($items);
+                $items = $data->toArray($request);
 
-        $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-        $paginator->withPath(config('app.url').'/api/v2/stocks/stock/'.$stationId.'/'.$productId.'/'.$date);
-        return response()->json($paginator);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+                $paginator->withPath(config('app.url').'/api/v2/stocks/stock/'.$stationId.'/'.$productId.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
+        } else {
+            return $response->message();
+        }
     }
 
-    public function getDayStocksByProductCodeId($stationId, $productCodeId, $date, Request $request) 
+    public function getDayStocksByProductCodeId($stationId, $productCodeId, $date, Request $request, Stock $stock) 
     {
-        // dd($request->all());
-        $stocks = Stock::where('station_id', $stationId)
-                ->where('product_code_id', $productCodeId)
-                ->where('date_of_inventory', $date)
-                ->get();
+        $response = Gate::inspect('view', [ $stock ]);
+
+        if ($response->allowed()) {
+            $stocks = Stock::where('station_id', $stationId)
+                    ->where('product_code_id', $productCodeId)
+                    ->where('date_of_inventory', $date)
+                    ->get();
+            
         
-       
-        $data = StockCollection::collection($stocks);
+            $data = StockResource::collection($stocks);
 
-        $items = $data->toArray($request);
+            $items = $data->toArray($request);
 
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-        $total = count($items);
+            if($data->count() > 0) {
 
-        $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-        $paginator->withPath(config('app.url').'/api/v2/stocks/stock/'.$stationId.'/'.$productCodeId.'/'.$date);
-        return response()->json($paginator);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+                $paginator->withPath(config('app.url').'/api/v2/stocks/stock/'.$stationId.'/'.$productCodeId.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
+        } else {
+            return $response->message();
+        }
     }
 
     public function storeWetStock(Request $request) 

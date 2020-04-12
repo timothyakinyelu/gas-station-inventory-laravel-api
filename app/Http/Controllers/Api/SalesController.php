@@ -124,61 +124,73 @@ class SalesController extends Controller
         ]);
     }
 
-    public function getDaySalesByProductId($stationId, $productId, $date, Request $request) 
+    public function getDaySalesByProductId($stationId, $productId, $date, Request $request, Sale $sale) 
     {
-        $sales = Sale::where('station_id', $stationId)
-                ->where('product_id', $productId)
-                ->where('date_of_entry', $date)
-                ->get();
+        $response = Gate::inspect('view', [ $sale ]);
+
+        if ($response->allowed()) {
+            $sales = Sale::where('station_id', $stationId)
+                    ->where('product_id', $productId)
+                    ->where('date_of_entry', $date)
+                    ->get();
+            
         
-       
-        $data = SaleResource::collection($sales)->flatten();
-        if($data->count() > 0) {
+            $data = SaleResource::collection($sales)->flatten();
+            if($data->count() > 0) {
 
-            $items = $data->toArray($request);
+                $items = $data->toArray($request);
 
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 10;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-            $paginator->withPath(config('app.url').'/api/v2/sales/sale/'.$stationId.'/'.$productId.'/'.$date);
-            return response()->json($paginator);
+                $paginator->withPath(config('app.url').'/api/v2/sales/sale/'.$stationId.'/'.$productId.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
         } else {
-            return response()->json([
-                'message' => 'No Record Available!'
-            ]);
+            return $response->message();
         }
     }
 
-    public function getDaySalesByProductCodeId($stationId, $productCodeId, $date, Request $request) 
+    public function getDaySalesByProductCodeId($stationId, $productCodeId, $date, Request $request, Sale $sale) 
     {
-        $sales = Sale::where('station_id', $stationId)
-                ->where('product_code_id', $productCodeId)
-                ->where('date_of_entry', $date)
-                ->get();
+        $response = Gate::inspect('view', [ $sale ]);
+
+        if ($response->allowed()) {
+            $sales = Sale::where('station_id', $stationId)
+                    ->where('product_code_id', $productCodeId)
+                    ->where('date_of_entry', $date)
+                    ->get();
+            
         
-       
-        $data = SaleResource::collection($sales)->flatten();
+            $data = SaleResource::collection($sales)->flatten();
 
-        if($data->count() > 0) {
-            $items = $data->toArray($request);
+            if($data->count() > 0) {
+                $items = $data->toArray($request);
 
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 10;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-            $paginator->withPath(config('app.url').'/api/v2/sales/sale/'.$stationId.'/'.$productCodeId.'/'.$date);
-            return response()->json($paginator);
+                $paginator->withPath(config('app.url').'/api/v2/sales/sale/'.$stationId.'/'.$productCodeId.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
         } else {
-            return response()->json([
-                'message' => 'No Record Available!'
-            ]);
+            return $response->message();
         }
     }
 
