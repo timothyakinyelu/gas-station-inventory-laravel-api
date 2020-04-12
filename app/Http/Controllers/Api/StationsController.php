@@ -107,7 +107,7 @@ class StationsController extends Controller
             foreach($expenses as $key => $expense) {
                 
                 $date = Carbon::now()->format('F');
-                $total_expenses = $expense->amount;
+                $total_expenses = $expense->expense_amount;
                 $st = $expense->station_id;
                 if(isset($tmp[$date])) {
                     if(isset($tmp[$date][$st])) {

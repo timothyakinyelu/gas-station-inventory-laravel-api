@@ -215,6 +215,28 @@ Route::group(['prefix' => 'v2'], function(){
         */
         Route::get('supplies/supply/dry/{stationId}/{productCodeId}/{date}', 'Api\SuppliesController@getDaySuppliesByProductCodeId');
 
+        /*
+        |-------------------------------------------------------------------------------
+        | Store expense
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/expenses/expense
+        | Controller:     Api\ExpensesController@storeExpense
+        | Method:         POST
+        | Description:    Store an expense in the db
+        */
+        Route::post('expenses/expense', 'Api\ExpensesController@storeExpense');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display expenses by station id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/sexpenses/expense/{stationId}/{date}
+        | Controller:     Api\ExpensesController@getDayExpenses
+        | Method:         GET
+        | Description:    Fetch expenses by station id from db
+        */
+        Route::get('expenses/expense/{stationId}/{date}', 'Api\ExpensesController@getDayExpenses');
+
         Route::group(['middleware' => ['admin']], function() {
             /*
             |-------------------------------------------------------------------------------
