@@ -171,6 +171,50 @@ Route::group(['prefix' => 'v2'], function(){
         */
         Route::get('productCode/products/{companyID}/{id}', 'Api\ProductsController@getProductByCodeId');
 
+        /*
+        |-------------------------------------------------------------------------------
+        | Store wet supplies
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/supplies/supply/wet
+        | Controller:     Api\SuppliesController@storeWetSupply
+        | Method:         POST
+        | Description:    Store a supply in the db
+        */
+        Route::post('supplies/supply/wet', 'Api\SuppliesController@storeWetSupply');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Store dry supplies
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/supplies/supply/dry
+        | Controller:     Api\SuppliesController@storeDrySupply
+        | Method:         POST
+        | Description:    Store a supply in the db
+        */
+        Route::post('supplies/supply/dry', 'Api\SuppliesController@storeDrySupply');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display wet supplies by product id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/supplies/supply/wet/{stationId}/{productId}/{date}
+        | Controller:     Api\SuppliesController@getDaySuppliesByProductId
+        | Method:         GET
+        | Description:    Fetch supplies by product id from db
+        */
+        Route::get('supplies/supply/wet/{stationId}/{productId}/{date}', 'Api\SuppliesController@getDaySuppliesByProductId');
+
+        /*
+        |-------------------------------------------------------------------------------
+        | Display dry supplies by product id
+        |-------------------------------------------------------------------------------
+        | URL:            /api/v2/supplies/supplies/dry/{stationId}/{productCodeId}/{date}
+        | Controller:     Api\SuppliesController@getDaySuppliesByProductId
+        | Method:         GET
+        | Description:    Fetch supplies by product id from db
+        */
+        Route::get('supplies/supply/dry/{stationId}/{productCodeId}/{date}', 'Api\SuppliesController@getDaySuppliesByProductCodeId');
+
         Route::group(['middleware' => ['admin']], function() {
             /*
             |-------------------------------------------------------------------------------

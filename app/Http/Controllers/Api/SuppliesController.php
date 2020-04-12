@@ -24,7 +24,6 @@ class SuppliesController extends Controller
             $data = SupplyResource::collection($supplies);
 
             if($data->count() > 0) {
-
                 $items = $data->toArray($request);
 
                 $currentPage = Paginator::resolveCurrentPage();
@@ -55,51 +54,74 @@ class SuppliesController extends Controller
         ]);
     }
 
-    public function getDaySuppliesByProductId($stationId, $productId, $date, Request $request) 
+    public function getDaySuppliesByProductId($stationId, $productId, $date, Request $request, Supply $supply) 
     {
-        $supplies = Supply::where('station_id', $stationId)
-                ->where('product_id', $productId)
-                ->where('date_of_supply', $date)
-                ->get();
+        $response = Gate::inspect('view', [ $supply ]);
+
+        if ($response->allowed()) {
+            $supplies = Supply::where('station_id', $stationId)
+                    ->where('product_id', $productId)
+                    ->where('date_of_supply', $date)
+                    ->get();
+            
         
-       
-        $data = SupplyCollection::collection($supplies);
+            $data = SupplyResource::collection($supplies);
 
-        $items = $data->toArray($request);
+            if($data->count() > 0) {
+                $items = $data->toArray($request);
 
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-        $total = count($items);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-        $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath(config('app.url').'/api/v2/supplies/supply/'.$stationId.'/'.$productId.'/'.$date);
-        return response()->json($paginator);
+                $paginator->withPath(config('app.url').'/api/v2/supplies/supply/'.$stationId.'/'.$productId.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
+        } else {
+            return $response->message();
+        }
     }
 
-    public function getDaySuppliesByProductCodeId($stationId, $productCodeId, $date, Request $request) 
+    public function getDaySuppliesByProductCodeId($stationId, $productCodeId, $date, Request $request, Supply $supply) 
     {
-        // dd($request->all());
-        $supplies = Supply::where('station_id', $stationId)
-                ->where('product_code_id', $productCodeId)
-                ->where('date_of_supply', $date)
-                ->get();
+        $response = Gate::inspect('view', [ $supply ]);
+
+        if ($response->allowed()) {
+            $supplies = Supply::where('station_id', $stationId)
+                    ->where('product_code_id', $productCodeId)
+                    ->where('date_of_supply', $date)
+                    ->get();
+            
         
-       
-        $data = SupplyCollection::collection($supplies);
+            $data = SupplyResource::collection($supplies);
 
-        $items = $data->toArray($request);
+            if($data->count() > 0) {
+                $items = $data->toArray($request);
 
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-        $total = count($items);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-        $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath(config('app.url').'/api/v2/supplies/supply/'.$stationId.'/'.$productCodeId.'/'.$date);
-        return response()->json($paginator);
+                $paginator->withPath(config('app.url').'/api/v2/supplies/supply/'.$stationId.'/'.$productCodeId.'/'.$date);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }
+        } else {
+            return $response->message();
+        }
     }
 
     public function storeWetSupply(Request $request) 
