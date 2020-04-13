@@ -96,7 +96,7 @@ class StationsController extends Controller
     public function getExpensesByCurrentMonth($id) 
     {
         $stationExpenses = [];
-        $dec = \base64_decode($id);
+        $dec = base64_decode($id);
         $stations = Station::where('company_id', $dec)->get();;
 
         foreach ($stations as $station) {
@@ -147,7 +147,7 @@ class StationsController extends Controller
     {
         // dd($id);
         $stationSales = [];
-        $dec = \base64_decode($id);
+        $dec = base64_decode($id);
         $stations = Station::where('company_id', $dec)->get();
 
         foreach ($stations as $station) {
