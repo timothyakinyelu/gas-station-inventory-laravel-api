@@ -25,7 +25,7 @@ class UsersController extends Controller
         $response = Gate::inspect('viewAny', [User::class]);
 
         if ($response->allowed()) {
-            $dec = \base64_decode($id);
+            $dec = base64_decode($id);
 
             $users = User::where('company_id', $dec)
                 ->orderBy('id', 'DESC')
@@ -62,6 +62,7 @@ class UsersController extends Controller
 
         if ($response->allowed()) {
             $pw = User::generatePassword();
+            $dec = base64_decode($request->input('company_id'));
 
             $user = new User;
             $user->station_id = $request->input('station_id');
@@ -69,6 +70,7 @@ class UsersController extends Controller
             $user->email = $request->input('email');
             $user->password = $pw;
             $user->permission = $request->input('permission');
+            $user->company_id = $dec;
 
             $user->save();
         
