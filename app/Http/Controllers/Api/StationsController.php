@@ -140,6 +140,51 @@ class StationsController extends Controller
         return response()->json($stationExpenses);
     }
 
+    public function getStationExpensesByDate($id, $from, $to) 
+    {
+        $stationExpenses = [];
+        $dec = \base64_decode($id);
+        $stations = Station::where('company_id', $dec)->get();;
+
+        foreach ($stations as $station) {
+            $tmp = [];
+            $expenses = Expense::where('station_id', $station->id)
+                        ->whereBetween('date_of_entry', [$from, $to])
+                        ->get();
+            foreach($expenses as $key => $expense) {
+                
+                $date = Carbon::parse($from)->format('F');
+                $total_expenses = $expense->expense_amount;
+                $st = $expense->station_id;
+                if(isset($tmp)) {
+                    if(isset($tmp[$date][$st])) {
+                        $tmp[$date][$st]['totalExpense'] += $total_expenses;
+                    } else {
+                        $tmp[$date][$st] = [
+                            'totalExpense' => $total_expenses,
+                        ];
+                    }
+                } else {
+                    $tmp[$date] = [
+                        $st => [
+                            'totalExpense' => $total_expenses,
+                        ]
+                    ];
+                }
+            }
+
+            $temp = [];
+            foreach($tmp as $xKey => $xData) {
+                foreach($xData as $yKey => $yData) {
+                    $temp[] = $yData;
+                }
+            }
+            $station['data'] = $temp;
+            $stationExpenses[] = $station;
+        }
+        return response()->json($stationExpenses);
+    }
+
     /**
      *  Fetch the current months station sales
      */
@@ -179,6 +224,60 @@ class StationsController extends Controller
                         $producttype => [
                             'totalSale' => $total_sales,
                             'month' => $date,
+                            'productType' => $producttypeName,
+                            'productTypeId' => $producttype
+                        ]
+                    ];
+                }
+            }
+
+            $temp = [];
+            foreach($tmp as $xKey => $xData) {
+                foreach($xData as $yKey => $yData) {
+                    $temp[] = $yData;
+                }
+            }
+            $station['data'] = $temp;
+            $stationSales[] = $station;
+        }
+        return response()->json($stationSales);
+    }
+
+    public function getStationSalesByDate($id, $from, $to) 
+    {
+        $stationSales = [];
+        $dec = \base64_decode($id);
+        $stations = Station::where('company_id', $dec)->get();
+
+        foreach ($stations as $station) {
+            $tmp = [];
+            $sales = Sale::where('station_id', $station->id)
+                    ->whereBetween('date_of_entry', [$from, $to])
+                    ->get();
+            foreach($sales as $key => $sale) {
+                
+                $date = Carbon::parse($from)->format('F');
+                $product = Product::find($sale->product_id);
+                $producttype = $product->product_type_id;
+                $producttypeName = ProductType::find($producttype)->name;
+                $total_sales = $sale->amount;
+
+                if(isset($tmp[$date])) {
+                    if(isset($tmp[$date][$producttype])) {
+                        $tmp[$date][$producttype]['totalSale'] += $total_sales;
+                    } else {
+                        $tmp[$date][$producttype] = [
+                            'totalSale' => $total_sales,
+                            // 'month' => $date,
+                            'productType' => $producttypeName,
+                            'productTypeId' => $producttype
+                        ];
+                    }
+                } else {
+                    $tmp[$date] = [
+                        $producttype => [
+                            'totalSale' => $total_sales,
+                            // 'month' => $date,
                             'productType' => $producttypeName,
                             'productTypeId' => $producttype
                         ]

@@ -383,6 +383,17 @@ Route::group(['prefix' => 'v2'], function(){
 
             /*
             |-------------------------------------------------------------------------------
+            | Display sum of month sales by period
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/selectedMonthSalesSum/{id}/{from}/{to}
+            | Controller:     Api\StationsController@getStationSalesByDate
+            | Method:         GET
+            | Description:    Fetch sum of month sales by period
+            */
+            Route::get('selectedMonthSalesSum/{id}/{from}/{to}', 'Api\StationsController@getStationSalesByDate');
+
+            /*
+            |-------------------------------------------------------------------------------
             | Display sum of current month expenses
             |-------------------------------------------------------------------------------
             | URL:            /api/v2/currentMonthExpensesSum/{id}
@@ -391,6 +402,17 @@ Route::group(['prefix' => 'v2'], function(){
             | Description:    Fetch sum of current month expenses
             */
             Route::get('currentMonthExpensesSum/{id}', 'Api\StationsController@getExpensesByCurrentMonth');
+
+            /*
+            |-------------------------------------------------------------------------------
+            | Display sum of month expenses by period
+            |-------------------------------------------------------------------------------
+            | URL:            /api/v2/selectedMonthExpensesSum/{id}/{from}/{to}
+            | Controller:     Api\StationsController@getStationExpensesByDate
+            | Method:         GET
+            | Description:    Fetch sum of month expenses by period
+            */
+            Route::get('selectedMonthExpensesSum/{id}/{from}/{to}', 'Api\StationsController@getStationExpensesByDate');
 
             /*
             |-------------------------------------------------------------------------------
