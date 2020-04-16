@@ -14,15 +14,26 @@ use App\ProductCode;
 
 class SalesController extends Controller
 {
-    public function getSalesByStation($id)
+    public function getSalesByStation($id, Request $request)
     {
         $response = Gate::inspect('viewAny', [ Sale::class ]);
         $data = [];
         
         if ($response->allowed()) {
-            $sales = Sale::where('station_id', $id)
-                ->orderBy('date_of_entry', 'DESC')
-                ->get();
+            $term = $request->input('search');
+
+            if ($term) {
+                $s = Sale::where('station_id', $id)->with(['product', 'product_code'])
+                    ->orderBy('date_of_entry', 'DESC')->get();
+
+                    $sales = $s->filter(function($item) use ($term) {
+                        return strpos($item['date_of_entry'].' '.$item->product_code['code'], strval($term)) !== false;
+                    });
+            } else {
+                $sales = Sale::where('station_id', $id)
+                    ->orderBy('date_of_entry', 'DESC')
+                    ->get();
+            }
 
             $results = [];
 
@@ -68,7 +79,7 @@ class SalesController extends Controller
             $items = $data;
 
             $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 10;
+            $perPage = 5;
             $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
             $total = count($items);
 
