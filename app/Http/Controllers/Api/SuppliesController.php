@@ -17,9 +17,24 @@ class SuppliesController extends Controller
         $response = Gate::inspect('viewAny', [ Supply::class ]);
 
         if ($response->allowed()) {
-            $supplies = Supply::where('station_id', $id)
-                ->orderBy('date_of_supply', 'DESC')
-                ->get();
+            $term = $request->input('search');
+
+            if ($term) {
+                $s = Supply::where('station_id', $id)
+                    ->orderBy('date_of_supply', 'DESC')
+                    ->get();
+                        
+                $supplies = $s->filter(function($item) use ($term) {
+                    $value = stripos($item->product['name']. ' ' .$item['date_of_supply'], strval($term)) !== false;
+                    $value1 = stripos($item['date_of_supply']. ' ' .$item->product['name'], strval($term)) !== false;
+                    
+                    return $value || $value1;
+                });
+            } else {
+                $supplies = Supply::where('station_id', $id)
+                    ->orderBy('date_of_supply', 'DESC')
+                    ->get();
+            }
 
             $data = SupplyResource::collection($supplies);
 

@@ -20,7 +20,7 @@ class StockResource extends JsonResource
             'product' => $this->when($this->product, function () {
                 return $this->product->name;
             }),
-            'tank_code' => $this->tank_code,
+            'tank_code' => $this->tank_code === null ? 'NA' : $this->tank_code,
             'start_stock' => $this->open_stock,
             'end_stock' => $this->close_stock,
             'sold' => $this->inventory_sold,

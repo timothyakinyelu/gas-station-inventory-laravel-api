@@ -14,15 +14,29 @@ use App\ProductCode;
 
 class SalesController extends Controller
 {
-    public function getSalesByStation($id)
+    public function getSalesByStation($id, Request $request)
     {
         $response = Gate::inspect('viewAny', [ Sale::class ]);
         $data = [];
         
         if ($response->allowed()) {
-            $sales = Sale::where('station_id', $id)
-                ->orderBy('date_of_entry', 'DESC')
-                ->get();
+            $term = $request->input('search');
+
+            if ($term) {
+                $k = Sale::where('station_id', $id)
+                    ->orderBy('date_of_entry', 'DESC')
+                    ->get();
+                        
+                $sales = $k->filter(function($item) use ($term) {
+                    $value = stripos($item->product_code['code']. ' ' .$item['date_of_entry'], strval($term)) !== false;
+                    $value1 = stripos($item['date_of_entry']. ' ' .$item->product_code['code'], strval($term)) !== false;
+                    
+                    return $value || $value1;
+                });
+            } else {
+                $sales = Sale::where('station_id', $id)
+                    ->orderBy('date_of_entry', 'DESC')->get();
+            }
 
             $results = [];
 
@@ -65,17 +79,24 @@ class SalesController extends Controller
             }
 
             $data = $temp;
-            $items = $data;
 
-            $currentPage = Paginator::resolveCurrentPage();
-            $perPage = 10;
-            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-            $total = count($items);
+            if(count($data) > 0) {
+                $items = $data;
 
-            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+                $currentPage = Paginator::resolveCurrentPage();
+                $perPage = 10;
+                $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+                $total = count($items);
 
-            $paginator->withPath(config('app.url').'/api/v2/salesbystation/'.$id);
-            return response()->json($paginator);
+                $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+
+                $paginator->withPath(config('app.url').'/api/v2/salesbystation/'.$id);
+                return response()->json($paginator);
+            } else {
+                return response()->json([
+                    'message' => 'No Record Available!'
+                ]);
+            }   
         } else {
             return $response->message();
         }

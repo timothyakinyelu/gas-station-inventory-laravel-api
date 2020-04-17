@@ -18,7 +18,7 @@ class EmployeeResource extends JsonResource
         return [
             'id' => $this->id,
             'station' => $this->when($this->station, function () {
-                return $this->station->name;
+                return $this->station->id === null ? 'NA' : $this->station->name;
             }),
             'name' => $this->firstName . ' ' . $this->lastName,
             'phone' => $this->phone,

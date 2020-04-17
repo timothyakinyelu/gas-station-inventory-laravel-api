@@ -17,9 +17,24 @@ class StocksController extends Controller
         $response = Gate::inspect('viewAny', [ Stock::class ]);
 
         if ($response->allowed()) {
-            $stocks = Stock::where('station_id', $id)
-                ->orderBy('date_of_inventory', 'DESC')
-                ->get();
+            $term = $request->input('search');
+
+            if ($term) {
+                $s = Stock::where('station_id', $id)
+                    ->orderBy('date_of_inventory', 'DESC')
+                    ->get();
+                        
+                $stocks = $s->filter(function($item) use ($term) {
+                    $value = stripos($item->product['name']. ' ' .$item['date_of_inventory'], strval($term)) !== false;
+                    $value1 = stripos($item['date_of_inventory']. ' ' .$item->product['name'], strval($term)) !== false;
+                    
+                    return $value || $value1;
+                });
+            } else {
+                $stocks = Stock::where('station_id', $id)
+                    ->orderBy('date_of_inventory', 'DESC')
+                    ->get();
+            }
 
             $data = StockResource::collection($stocks);
 
