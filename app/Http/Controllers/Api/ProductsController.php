@@ -9,8 +9,8 @@ use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Gate;
 
 use App\Product;
-use App\productCode;
-use App\productType;
+use App\ProductCode;
+use App\ProductType;
 
 class ProductsController extends Controller
 {
