@@ -53,12 +53,14 @@ class ProductsController extends Controller
 
     public function productType() 
     {
-        return ProductType::orderBy('id', 'DESC')->get();
+        $ProductType = ProductType::orderBy('id', 'DESC')->get();
+        return response()->json($ProductType);
     }
 
     public function productCode() 
     {
-        return ProductCode::orderBy('id', 'DESC')->get();
+        $ProductCode = ProductCode::orderBy('id', 'DESC')->get();
+        return response()->json($ProductCode);
     }
 
     public function store(NewProductRequest $request) 
