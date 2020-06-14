@@ -56,17 +56,25 @@ class ExpensesController extends Controller
         }
 
         $data = $temp;
-        $items = $data;
+        
+        if(count($data) > 0) {
+            $items = $data;
 
-        $currentPage = Paginator::resolveCurrentPage();
-        $perPage = 10;
-        $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
-        $total = count($items);
+            $currentPage = Paginator::resolveCurrentPage();
+            $perPage = 10;
+            $currentItems = array_slice($items, $perPage * ($currentPage - 1), $perPage);
+            $total = count($items);
 
-        $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
+            $paginator= new Paginator($currentItems, $total, $perPage, $currentPage);
 
-        $paginator->withPath(config('app.url').'/api/v2/expensesbystation/'.$id);
-        return response()->json($paginator);
+            $paginator->withPath(config('app.url').'/api/v2/expensesbystation/'.$id);
+            return response()->json($paginator);
+        } else {
+            return response()->json([
+                'message' => 'No Record Available!'
+            ]);
+        }   
+
     }
 
     public function getExpenseDetails($id, $date, Request $request) 
