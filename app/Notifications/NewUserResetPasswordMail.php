@@ -40,7 +40,7 @@ class NewUserResetPasswordMail extends Notification
      */
     public function toMail($notifiable)
     {
-        $appUrl = "https://intree-v2.herokuapp.com";
+        $appUrl = "https://intree.herokuapp.com";
         $link = $appUrl."/settings/reset-password/".$this->token;
         return ( new MailMessage )
             ->from('florashawserv@gmail.com', 'inTree')
