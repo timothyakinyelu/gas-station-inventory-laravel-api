@@ -14,7 +14,7 @@ class AddCompanyIdToEmployeesTable extends Migration
     public function up()
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->bigInteger('company_id')->unsigned();
+            $table->bigInteger('company_id')->nullable();
             $table->foreign('company_id')->references('id')->on('companies');
         });
     }
