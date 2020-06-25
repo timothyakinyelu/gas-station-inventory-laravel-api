@@ -82,7 +82,7 @@ class EmployeesController extends Controller
             }
 
             return response()->json([
-                'data' => 'employee Added',
+                'data' => 'Employee Added Successfully',
             ]);
         } else {
             return $response->message();
@@ -202,7 +202,7 @@ class EmployeesController extends Controller
             }
        
             return response()->json([
-                'success' => 'User updated successfully'
+                'success' => 'Employee updated successfully'
             ]);
         } else {
             return $response->message();
