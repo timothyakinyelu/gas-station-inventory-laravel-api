@@ -188,7 +188,7 @@ class ExpensesController extends Controller
         $response = Gate::inspect('update', $expense);
 
         if ($response->allowed()) {
-            $expense->amount = $request->get('amount');
+            $expense->expense_amount = $request->get('amount');
             $expense->description = $request->get('description');
             $expense->date_of_entry = $request->get('expense_date');
     
