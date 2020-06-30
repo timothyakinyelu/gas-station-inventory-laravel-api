@@ -171,6 +171,7 @@ class StationsController extends Controller
                         ]
                     ];
                 }
+                
             }
 
             $temp = [];
