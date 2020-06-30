@@ -234,6 +234,7 @@ class StationsController extends Controller
             $temp = [];
             foreach($tmp as $xKey => $xData) {
                 foreach($xData as $yKey => $yData) {
+                    // $yData['formatted_amount'] = \number_format($yData['total_expense'],
                     $temp[] = $yData;
                 }
             }
