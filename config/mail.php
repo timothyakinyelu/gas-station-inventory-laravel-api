@@ -84,7 +84,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'florashawserv@gmail.com'),
-        'name' => env('MAIL_FROM_NAME', 'inTree'),
+        'name' => env('MAIL_FROM_NAME', 'inventreed'),
     ],
 
     /*

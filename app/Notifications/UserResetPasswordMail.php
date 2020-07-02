@@ -40,12 +40,12 @@ class UserResetPasswordMail extends Notification
      */
     public function toMail($notifiable)
     {
-        $appUrl = "https://intree.herokuapp.com";
+        $appUrl = "https://inventreed.com";
         $link = $appUrl."/settings/reset-password/".$this->token;
         return ( new MailMessage )
-            ->from('florashawserv@gmail.com', 'inTree')
+            ->from('florashawserv@gmail.com', 'inventreed')
             ->subject( 'Reset Password Notification' )
-            ->line( "Welcome to inTree Inventory Management App" )
+            ->line( "Welcome to inventreed Inventory Management App" )
             ->line( "You are receiving this email because we received a password reset request for your account." )
             ->action( 'Reset Password', $link )
             ->line( "If you did not request a password reset, no further action is required." ); 
