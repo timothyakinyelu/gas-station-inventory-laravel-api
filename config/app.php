@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://inventreed-demo.herokuapp.com'),
+    'url' => env('APP_URL', 'https://inventreed-api.herokuapp.com'),
 
     'asset_url' => env('ASSET_URL', null),
 
