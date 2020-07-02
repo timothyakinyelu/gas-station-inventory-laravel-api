@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'inTree'),
+    'name' => env('APP_NAME', 'inventreed'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://intree-demo.herokuapp.com'),
+    'url' => env('APP_URL', 'https://inventreed-demo.herokuapp.com'),
 
     'asset_url' => env('ASSET_URL', null),
 
