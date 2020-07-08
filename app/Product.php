@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'product_type_id', 'product_code_id', 'price'];
+    protected $fillable = ['name', 'company_id', 'product_type_id', 'product_code_id', 'price'];
     public $timestamps = false;
     
     //Relationship
