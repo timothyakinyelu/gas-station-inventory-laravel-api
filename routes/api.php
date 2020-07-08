@@ -293,6 +293,7 @@ Route::group(['prefix' => 'v2'], function(){
             */
             Route::delete('users/{id}', 'Api\UsersController@delete');
 
+            
             /*
             |-------------------------------------------------------------------------------
             | Display all products
