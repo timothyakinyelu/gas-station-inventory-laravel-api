@@ -147,7 +147,7 @@ Route::group(['prefix' => 'v2'], function(){
         | Method:         GET
         | Description:    Fetch all products from db
         */
-        Route::get('product-types', 'Api\ProductsController@productType');
+        Route::get('product-types', 'Api\ProductsController@productTypes');
 
         /*
         |-------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ Route::group(['prefix' => 'v2'], function(){
         | Method:         GET
         | Description:    Fetch all products from db
         */
-        Route::get('product-codes', 'Api\ProductsController@productCode');
+        Route::get('product-codes', 'Api\ProductsController@productCodes');
 
         /*
         |-------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ Route::group(['prefix' => 'v2'], function(){
         | Method:         GET
         | Description:    Fetch product from db
         */
-        Route::get('productCode/products/{companyID}/{id}', 'Api\ProductsController@getProductByCodeId');
+        Route::get('productCode/products/{companyID}/{id}', 'Api\ProductsController@getProductsByCodeId');
 
         /*
         |-------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ Route::group(['prefix' => 'v2'], function(){
             */
             Route::delete('users/{id}', 'Api\UsersController@delete');
 
-            
+
             /*
             |-------------------------------------------------------------------------------
             | Display all products
