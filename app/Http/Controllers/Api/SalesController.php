@@ -218,7 +218,7 @@ class SalesController extends Controller
     public function storeWet(Request $request) 
     {
         $response = Gate::inspect('create', [Sale::class]);
-        dd($request->all());
+        
         $foreCourts = json_decode($request->foreCourts, true);
         $List = array();
 
