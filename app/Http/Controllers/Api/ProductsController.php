@@ -148,11 +148,10 @@ class ProductsController extends Controller
 
         if ($response->allowed()) {
             $id = explode(",", $ids);
-            $products_to_delete = Product::find($id);
 
             $product = Product::whereIn('id', $id)->delete();
 
-            if($sale) {
+            if($product) {
                 return response()->json(
                     ['status' => 'Product has been deleted']
                 );
