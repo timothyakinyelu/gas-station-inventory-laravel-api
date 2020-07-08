@@ -67,12 +67,16 @@ class ProductsController extends Controller
     public function store(NewProductRequest $request) 
     {
         $response = Gate::inspect('create', [ Product::class]);
+        
 
         if ($response->allowed()) {
             // The action is authorized...
+            $companyID = \base64_decode($request->input('company_id'));
+
             $product = Product::firstOrCreate(
                 ['name' => $request->input('name')],
                 [
+                    'company_id' => $companyID,
                     'product_type_id' => $request->input('product_type_id'), 
                     'product_code_id' => $request->input('product_code_id'),
                     'price' => $request->input('price')
