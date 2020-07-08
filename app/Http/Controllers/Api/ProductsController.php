@@ -61,7 +61,6 @@ class ProductsController extends Controller
     public function productCodes() 
     {
         $ProductCode = ProductCode::orderBy('id', 'DESC')->get();
-        print($ProductType);
         return response()->json($ProductCode);
     }
 
