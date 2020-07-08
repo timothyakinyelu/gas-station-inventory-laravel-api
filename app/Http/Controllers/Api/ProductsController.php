@@ -21,6 +21,7 @@ class ProductsController extends Controller
 
         if ($response->allowed()) {
             $dec = \base64_decode($id);
+            dd($dec);
 
             $products = Product::where('company_id', $dec)
                 ->orderBy('id', 'DESC')
@@ -55,12 +56,14 @@ class ProductsController extends Controller
     public function productType() 
     {
         $ProductType = ProductType::orderBy('id', 'DESC')->get();
+        dd($ProductType);
         return response()->json($ProductType);
     }
 
     public function productCode() 
     {
         $ProductCode = ProductCode::orderBy('id', 'DESC')->get();
+        dd($ProductType);
         return response()->json($ProductCode);
     }
 
